@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Library</OutputType>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <LangVersion>latest</LangVersion>
+        <RootNamespace>Serilog</RootNamespace>
+        <DefineConstants>UTF8_RENDERING</DefineConstants>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <AssemblyOriginatorKeyFile>../../assets/Serilog.snk</AssemblyOriginatorKeyFile>
+        <SignAssembly>true</SignAssembly>
+        
+        <PackageId>Serilog.Sinks.RawConsole</PackageId>
+        <Version>0.0.1</Version>
+        <PackageVersion>0.0.1</PackageVersion>
+
+        <PackageTags>serilog;console;rawconsole</PackageTags>
+        <PackageIcon>images\icon.png</PackageIcon>
+        <PackageProjectUrl>https://github.com/epeshk/serilog-sinks-rawconsole</PackageProjectUrl>
+        <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+        <RepositoryUrl>https://github.com/epeshk/serilog-sinks-rawconsole</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <RootNamespace>Serilog</RootNamespace>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <EnableSourceLink Condition="'$(EnableSourceLink)' == ''">false</EnableSourceLink>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+        <DefineConstants>UTF8_RENDERING</DefineConstants>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        <PackageDescription>Write Serilog events to events to console or stream efficiently.</PackageDescription>
+
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Serilog" Version="2.10.0" />
+      <PackageReference Include="Serilog.Formatting.BufferWriter" Version="0.0.2" />
+    </ItemGroup>
+
+    <ItemGroup Condition="$([System.Text.RegularExpressions.Regex]::IsMatch($(DefineConstants), '^(.*;)*UTF8_RENDERING(;.*)*$'))">
+        <!-- Required for format strings support without providing an IBufferWriterFormatter implementation -->
+        <Compile Include="..\..\..\serilog-utf8-commons\src\Commons\Includes\**" LinkBase="Commons\"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <None Include="..\..\README.md" Pack="true" Visible="false" PackagePath="README.md" />
+        <None Include="..\..\assets\serilog-sink-nuget.png" Pack="true" Visible="false" PackagePath="images\icon.png" />
+    </ItemGroup>
+</Project>
