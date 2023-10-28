@@ -11,9 +11,9 @@ class RawStreamSink : ILogEventSink, IDisposable
 
   readonly object sync = new();
   readonly Stream output;
-  IBufferWriterFormatter formatter;
+  readonly IBufferWriterFormatter formatter;
   readonly bool buffered;
-  ArrayBufferWriter<byte> sharedBuffer = new(DefaultWriteBufferCapacity);
+  readonly ArrayBufferWriter<byte> sharedBuffer = new(DefaultWriteBufferCapacity);
 
   const int DefaultWriteBufferCapacity = 8192;
   const int DefaultPerThreadBufferCapacity = 512;
@@ -45,7 +45,7 @@ class RawStreamSink : ILogEventSink, IDisposable
       if (!buffered || sharedBuffer.WrittenCount >= FlushWriteBufferCapacity)
       {
         output.Write(sharedBuffer.WrittenSpan);
-        Reset(sharedBuffer);
+        sharedBuffer.ResetWrittenCount();
       }
     }
     finally
@@ -57,7 +57,7 @@ class RawStreamSink : ILogEventSink, IDisposable
   void RenderAndThenEmitUnderLock(LogEvent logEvent)
   {
     var curThreadBuffer = perThreadBuffer ??= new ArrayBufferWriter<byte>(DefaultPerThreadBufferCapacity);
-    Reset(curThreadBuffer);
+    curThreadBuffer.ResetWrittenCount();
 
     formatter.Format(logEvent, curThreadBuffer);
 
@@ -67,11 +67,11 @@ class RawStreamSink : ILogEventSink, IDisposable
       if (!buffered || sharedBuffer.WrittenCount >= FlushWriteBufferCapacity)
       {
         output.Write(sharedBuffer.WrittenSpan);
-        Reset(sharedBuffer);
+        sharedBuffer.ResetWrittenCount();
       }
     }
 
-    Reset(curThreadBuffer);
+    curThreadBuffer.ResetWrittenCount();
   }
 
   public void Dispose()
@@ -81,19 +81,10 @@ class RawStreamSink : ILogEventSink, IDisposable
       if (sharedBuffer.WrittenCount == 0)
         return;
       output.Write(sharedBuffer.WrittenSpan);
-      Reset(sharedBuffer);
+      sharedBuffer.ResetWrittenCount();
     }
 
     output.Flush();
     output.Dispose();
-  }
-
-  static void Reset(ArrayBufferWriter<byte> abw)
-  {
-#if NET8_0_OR_GREATER
-        abw.ResetWrittenCount();
-#else
-    abw.Clear();
-#endif
   }
 }

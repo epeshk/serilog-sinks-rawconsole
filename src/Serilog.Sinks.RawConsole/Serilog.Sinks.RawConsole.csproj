@@ -13,8 +13,8 @@
         <SignAssembly>true</SignAssembly>
         
         <PackageId>Serilog.Sinks.RawConsole</PackageId>
-        <Version>0.0.2</Version>
-        <PackageVersion>0.0.2</PackageVersion>
+        <Version>0.0.3</Version>
+        <PackageVersion>0.0.3</PackageVersion>
 
         <PackageTags>serilog;console;rawconsole</PackageTags>
         <PackageIcon>images\icon.png</PackageIcon>
